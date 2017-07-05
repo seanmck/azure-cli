@@ -13,7 +13,6 @@ from azure.cli.core.commands.arm import parse_resource_id, is_valid_resource_id,
 from azure.cli.core.commands.client_factory import get_subscription_id, get_mgmt_service_client
 from azure.cli.core.commands.validators import DefaultStr
 
-from azure.cli.core.util import CLIError
 from azure.cli.command_modules.network._client_factory import _network_client_factory
 from azure.cli.command_modules.network._util import _get_property, _set_param
 
@@ -25,6 +24,8 @@ from azure.mgmt.dns.models import (RecordSet, AaaaRecord, ARecord, CnameRecord, 
 from azure.cli.command_modules.network.zone_file.parse_zone_file import parse_zone_file
 from azure.cli.command_modules.network.zone_file.make_zone_file import make_zone_file
 from azure.cli.core.profiles import get_sdk, supported_api_version, ResourceType
+
+from knack.util import CLIError
 
 logger = azlogging.get_az_logger(__name__)
 

@@ -23,9 +23,10 @@ from azure.keyvault import KeyVaultId
 from azure.cli.core.commands import LongRunningOperation
 from azure.cli.core.commands.arm import parse_resource_id, resource_id, is_valid_resource_id
 from azure.cli.core.commands.client_factory import get_mgmt_service_client, get_data_service_client
-from azure.cli.core.util import CLIError
 import azure.cli.core.azlogging as azlogging
 from azure.cli.core.profiles import get_sdk, ResourceType, supported_api_version
+
+from knack.util import CLIError
 
 from ._vm_utils import read_content_if_is_file
 from ._vm_diagnostics_templates import get_default_diag_config

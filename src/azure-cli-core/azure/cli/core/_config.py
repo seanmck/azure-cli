@@ -8,64 +8,16 @@ from six.moves import configparser
 
 from azure.cli.core._environment import get_config_dir
 
+from knack.config import get_config_parser, CLIConfig
+
 GLOBAL_CONFIG_DIR = get_config_dir()
 CONFIG_FILE_NAME = 'config'
 GLOBAL_CONFIG_PATH = os.path.join(GLOBAL_CONFIG_DIR, CONFIG_FILE_NAME)
 ENV_VAR_PREFIX = 'AZURE_'
 DEFAULTS_SECTION = 'defaults'
 
-_UNSET = object()
-_ENV_VAR_FORMAT = ENV_VAR_PREFIX + '{section}_{option}'
 
-
-def get_config_parser():
-    import sys
-
-    python_version = sys.version_info.major
-    return configparser.ConfigParser() if python_version == 3 else configparser.SafeConfigParser()
-
-
-class AzConfig(object):
-    _BOOLEAN_STATES = {'1': True, 'yes': True, 'true': True, 'on': True,
-                       '0': False, 'no': False, 'false': False, 'off': False}
-
-    def __init__(self):
-        self.config_parser = get_config_parser()
-
-    @staticmethod
-    def env_var_name(section, option):
-        return _ENV_VAR_FORMAT.format(section=section.upper(),
-                                      option=option.upper())
-
-    def has_option(self, section, option):
-        if AzConfig.env_var_name(section, option) in os.environ:
-            return True
-        return self.config_parser.has_option(section, option)
-
-    def get(self, section, option, fallback=_UNSET):
-        try:
-            env = AzConfig.env_var_name(section, option)
-            return os.environ[env] if env in os.environ else self.config_parser.get(section, option)
-        except (configparser.NoSectionError, configparser.NoOptionError):
-            if fallback is _UNSET:
-                raise
-            else:
-                return fallback
-
-    def getint(self, section, option, fallback=_UNSET):
-        return int(self.get(section, option, fallback))
-
-    def getfloat(self, section, option, fallback=_UNSET):
-        return float(self.get(section, option, fallback))
-
-    def getboolean(self, section, option, fallback=_UNSET):
-        val = str(self.get(section, option, fallback))
-        if val.lower() not in AzConfig._BOOLEAN_STATES:
-            raise ValueError('Not a boolean: {}'.format(val))
-        return AzConfig._BOOLEAN_STATES[val.lower()]
-
-
-az_config = AzConfig()
+az_config = CLIConfig(config_dir=GLOBAL_CONFIG_DIR, config_env_var_prefix=ENV_VAR_PREFIX)
 az_config.config_parser.read(GLOBAL_CONFIG_PATH)
 
 

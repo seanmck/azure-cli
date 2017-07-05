@@ -17,19 +17,19 @@ import traceback
 from collections import OrderedDict, defaultdict
 from importlib import import_module
 
+from knack.arguments import ArgumentRegistry, CLICommandArgument
+from knack.introspection import extract_args_from_signature, extract_full_summary_from_signature
+from knack.prompting import prompt_y_n, NoTTYException
+from knack.util import CLIError
+
 import six
 from six import string_types, reraise
 
 import azure.cli.core.azlogging as azlogging
 import azure.cli.core.telemetry as telemetry
-from azure.cli.core.util import CLIError
-from azure.cli.core.prompting import prompt_y_n, NoTTYException
 from azure.cli.core._config import az_config, DEFAULTS_SECTION
 from azure.cli.core.profiles import ResourceType, supported_api_version
 from azure.cli.core.profiles._shared import get_versioned_sdk_path
-
-from ._introspection import (extract_args_from_signature,
-                             extract_full_summary_from_signature)
 
 logger = azlogging.get_az_logger(__name__)
 
@@ -58,7 +58,7 @@ class VersionConstraint(object):
         if supported_api_version(self._type, min_api=self._min_api, max_api=self._max_api):
             register_cli_argument(*args, **kwargs)
         else:
-            from azure.cli.core.commands.parameters import ignore_type
+            from knack.arguments import ignore_type
             kwargs = {}
             args = tuple([args[0], args[1], ignore_type])
             register_cli_argument(*args, **kwargs)
@@ -70,61 +70,6 @@ class VersionConstraint(object):
     def cli_command(self, *args, **kwargs):
         if supported_api_version(self._type, min_api=self._min_api, max_api=self._max_api):
             cli_command(*args, **kwargs)
-
-
-class CliArgumentType(object):  # pylint: disable=too-few-public-methods
-    REMOVE = '---REMOVE---'
-
-    def __init__(self, overrides=None, **kwargs):
-        if isinstance(overrides, str):
-            raise ValueError("Overrides has to be a CliArgumentType (cannot be a string)")
-        options_list = kwargs.get('options_list', None)
-        if options_list and isinstance(options_list, str):
-            kwargs['options_list'] = [options_list]
-        self.settings = {}
-        self.update(overrides, **kwargs)
-
-    def update(self, other=None, **kwargs):
-        if other:
-            self.settings.update(**other.settings)
-        self.settings.update(**kwargs)
-
-
-class CliCommandArgument(object):  # pylint: disable=too-few-public-methods
-    _NAMED_ARGUMENTS = ('options_list', 'validator', 'completer', 'id_part', 'arg_group')
-
-    def __init__(self, dest=None, argtype=None, **kwargs):
-        self.type = CliArgumentType(overrides=argtype, **kwargs)
-        if dest:
-            self.type.update(dest=dest)
-
-        # We'll do an early fault detection to find any instances where we have inconsistent
-        # set of parameters for argparse
-        if not self.options_list and 'required' in self.options:  # pylint: disable=access-member-before-definition
-            raise ValueError(message="You can't specify both required and an options_list")
-        if not self.options.get('dest', False):
-            raise ValueError('Missing dest')
-        if not self.options_list:  # pylint: disable=access-member-before-definition
-            self.options_list = ('--{}'.format(self.options['dest'].replace('_', '-')),)
-
-    def __getattr__(self, name):
-        if name in self._NAMED_ARGUMENTS:
-            return self.type.settings.get(name, None)
-        elif name == 'name':
-            return self.type.settings.get('dest', None)
-        elif name == 'options':
-            return {key: value for key, value in self.type.settings.items()
-                    if key != 'options' and key not in self._NAMED_ARGUMENTS and
-                    not value == CliArgumentType.REMOVE}
-        elif name == 'choices':
-            return self.type.settings.get(name, None)
-        else:
-            raise AttributeError(message=name)
-
-    def __setattr__(self, name, value):
-        if name == 'type':
-            return super(CliCommandArgument, self).__setattr__(name, value)
-        self.type.settings[name] = value
 
 
 class LongRunningOperation(object):  # pylint: disable=too-few-public-methods
@@ -313,7 +258,7 @@ class CliCommand(object):  # pylint:disable=too-many-instance-attributes
 
     def add_argument(self, param_name, *option_strings, **kwargs):
         dest = kwargs.pop('dest', None)
-        argument = CliCommandArgument(
+        argument = CLICommandArgument(
             dest or param_name, options_list=option_strings, **kwargs)
         self.arguments[param_name] = argument
 
@@ -430,7 +375,7 @@ def register_extra_cli_argument(command, dest, **kwargs):
     '''Register extra parameters for the given command. Typically used to augment auto-command built
     commands to add more parameters than the specific SDK method introspected.
     '''
-    _cli_extra_argument_registry[command][dest] = CliCommandArgument(dest, **kwargs)
+    _cli_extra_argument_registry[command][dest] = CLICommandArgument(dest, **kwargs)
 
 
 def cli_command(module_name, name, operation,
@@ -634,27 +579,7 @@ def _get_cli_extra_arguments(command):
     return _cli_extra_argument_registry[command].items()
 
 
-class _ArgumentRegistry(object):
-    def __init__(self):
-        self.arguments = defaultdict(lambda: {})
-
-    def register_cli_argument(self, scope, dest, argtype, **kwargs):
-        argument = CliArgumentType(overrides=argtype,
-                                   **kwargs)
-        self.arguments[scope][dest] = argument
-
-    def get_cli_argument(self, command, name):
-        parts = command.split()
-        result = CliArgumentType()
-        for index in range(0, len(parts) + 1):
-            probe = ' '.join(parts[0:index])
-            override = self.arguments.get(probe, {}).get(name, None)
-            if override:
-                result.update(override)
-        return result
-
-
-_cli_argument_registry = _ArgumentRegistry()
+_cli_argument_registry = ArgumentRegistry()
 _cli_extra_argument_registry = defaultdict(lambda: {})
 
 

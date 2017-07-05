@@ -8,10 +8,11 @@ from azure.cli.core import __version__ as core_version
 from azure.cli.core._profile import Profile, CLOUD
 import azure.cli.core._debug as _debug
 import azure.cli.core.azlogging as azlogging
-from azure.cli.core.util import CLIError
 from azure.cli.core.application import APPLICATION
 from azure.cli.core.profiles._shared import get_client_class
 from azure.cli.core.profiles import get_api_version, get_sdk, ResourceType
+
+from knack.util import CLIError
 
 logger = azlogging.get_az_logger(__name__)
 

@@ -8,11 +8,11 @@
 from __future__ import print_function
 
 from azure.cli.core.decorators import transfer_doc
-from azure.cli.core.util import CLIError
 from azure.cli.core.profiles import get_sdk, supported_api_version, ResourceType
-
 from azure.cli.command_modules.storage._factory import storage_client_factory
 from azure.cli.core.application import APPLICATION
+
+from knack.util import CLIError
 
 Logging, Metrics, CorsRule, AccessPolicy, RetentionPolicy = get_sdk(ResourceType.DATA_STORAGE,
                                                                     'Logging',

@@ -17,7 +17,7 @@ custome_path = 'azure.cli.command_modules.cosmosdb.custom#'
 
 def deprecate(argv):
     if argv[0] == 'documentdb':
-        from azure.cli.core.util import CLIError
+        from knack.util import CLIError
         raise CLIError('All documentdb commands have been renamed to cosmosdb')
 
 

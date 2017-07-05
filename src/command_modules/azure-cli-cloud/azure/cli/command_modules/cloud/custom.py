@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 # pylint: disable=unused-argument
-from azure.cli.core.util import CLIError, to_snake_case
+from knack.util import CLIError, to_snake_case
 
 from azure.cli.core.cloud import (Cloud,
                                   get_clouds,

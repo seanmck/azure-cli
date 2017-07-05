@@ -9,22 +9,24 @@ from argcomplete.completers import FilesCompleter
 from azure.mgmt.resource.resources.models import DeploymentMode
 from azure.mgmt.resource.locks.models import LockLevel
 from azure.mgmt.resource.managedapplications.models import ApplianceLockLevel
-from azure.cli.core.commands import register_cli_argument, CliArgumentType
-from azure.cli.core.commands.parameters import (ignore_type, resource_group_name_type, tag_type,
-                                                tags_type, get_resource_group_completion_list,
-                                                enum_choice_list, no_wait_type, file_type)
+from azure.cli.core.commands import register_cli_argument
+from azure.cli.core.commands.parameters import \
+    (resource_group_name_type, tag_type, tags_type, get_resource_group_completion_list, no_wait_type, file_type)
+
+from knack.arguments import enum_choice_list, ignore_type, CLIArgumentType
+
 from .custom import (get_policy_completion_list, get_policy_assignment_completion_list,
                      get_resource_types_completion_list, get_providers_completion_list)
 from ._validators import process_deployment_create_namespace, validate_lock_parameters
 
 # BASIC PARAMETER CONFIGURATION
 
-resource_name_type = CliArgumentType(options_list=('--name', '-n'), help='The resource name. (Ex: myC)')
-resource_type_type = CliArgumentType(help="The resource type (Ex: 'resC'). Can also accept namespace/type"
+resource_name_type = CLIArgumentType(options_list=('--name', '-n'), help='The resource name. (Ex: myC)')
+resource_type_type = CLIArgumentType(help="The resource type (Ex: 'resC'). Can also accept namespace/type"
                                           " format (Ex: 'Microsoft.Provider/resC')")
-resource_namespace_type = CliArgumentType(options_list=('--namespace',), completer=get_providers_completion_list,
+resource_namespace_type = CLIArgumentType(options_list=('--namespace',), completer=get_providers_completion_list,
                                           help="Provider namespace (Ex: 'Microsoft.Provider')")
-resource_parent_type = CliArgumentType(required=False, options_list=('--parent',),
+resource_parent_type = CLIArgumentType(required=False, options_list=('--parent',),
                                        help="The parent path (Ex: 'resA/myA/resB/myB')")
 _PROVIDER_HELP_TEXT = 'the resource namespace, aka \'provider\''
 register_cli_argument('resource', 'no_wait', no_wait_type)
@@ -57,7 +59,7 @@ register_cli_argument('feature', 'resource_provider_namespace', options_list=('-
 register_cli_argument('feature list', 'resource_provider_namespace', options_list=('--namespace',), required=False, help=_PROVIDER_HELP_TEXT)
 register_cli_argument('feature', 'feature_name', options_list=('--name', '-n'), help='the feature name')
 
-existing_policy_definition_name_type = CliArgumentType(options_list=('--name', '-n'), completer=get_policy_completion_list, help='The policy definition name')
+existing_policy_definition_name_type = CLIArgumentType(options_list=('--name', '-n'), completer=get_policy_completion_list, help='The policy definition name')
 register_cli_argument('policy', 'resource_group_name', arg_type=resource_group_name_type, help='the resource group where the policy will be applied')
 register_cli_argument('policy definition', 'policy_definition_name', arg_type=existing_policy_definition_name_type)
 register_cli_argument('policy definition create', 'name', options_list=('--name', '-n'), help='name of the new policy definition')

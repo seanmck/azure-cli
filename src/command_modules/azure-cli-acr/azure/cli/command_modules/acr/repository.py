@@ -8,9 +8,10 @@ from base64 import b64encode
 import requests
 from requests.utils import to_native_string
 
-from azure.cli.core.prompting import prompt, prompt_pass, NoTTYException, prompt_y_n
 import azure.cli.core.azlogging as azlogging
-from azure.cli.core.util import CLIError
+
+from knack.prompting import prompt, prompt_pass, NoTTYException, prompt_y_n
+from knack.util import CLIError
 
 from azure.mgmt.containerregistry.v2017_06_01_preview.models import SkuTier
 

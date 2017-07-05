@@ -12,7 +12,7 @@ import time
 import unittest
 
 import six
-from azure.cli.core.util import CLIError
+from knack.util import CLIError
 from azure.cli.testsdk.vcr_test_base import (VCRTestBase,
                                              ResourceGroupVCRTestBase,
                                              JMESPathCheck,

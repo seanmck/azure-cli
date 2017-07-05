@@ -28,6 +28,7 @@ from six.moves.urllib.parse import urlparse, parse_qs  # pylint: disable=import-
 
 import vcr
 import jmespath
+from knack.util import CLIError
 
 from azure_devtools.scenario_tests.const import ENV_LIVE_TEST
 
@@ -38,7 +39,6 @@ from azure.cli.main import main as cli_main
 from azure.cli.core import __version__ as core_version
 import azure.cli.core._debug as _debug
 from azure.cli.core._profile import Profile, CLOUD
-from azure.cli.core.util import CLIError
 
 from .base import find_recording_dir
 

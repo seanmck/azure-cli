@@ -7,10 +7,10 @@ from __future__ import print_function
 import sys
 
 from azure.cli.core import __version__ as core_version
-from azure.cli.core.util import CLIError
-from azure.cli.core.prompting import prompt, NoTTYException
 import azure.cli.core.azlogging as azlogging
 
+from knack.prompting import prompt, NoTTYException
+from knack.util import CLIError
 
 logger = azlogging.get_az_logger(__name__)
 

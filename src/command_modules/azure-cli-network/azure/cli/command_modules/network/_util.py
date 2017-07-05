@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 import sys
-from azure.cli.core.util import CLIError
+from knack.util import CLIError
 from ._client_factory import _network_client_factory
 
 

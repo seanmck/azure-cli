@@ -9,15 +9,15 @@ import os
 import uuid
 import argparse
 from azure.cli.core.parser import AzCliCommandParser, enable_autocomplete
-from azure.cli.core._output import CommandResultItem
 import azure.cli.core.extensions
 import azure.cli.core._help as _help
 import azure.cli.core.azlogging as azlogging
-from azure.cli.core.util import todict, truncate_text, CLIError, read_file_content
+from azure.cli.core.util import truncate_text, read_file_content
 from azure.cli.core._config import az_config
 import azure.cli.core.commands.progress as progress
-
 import azure.cli.core.telemetry as telemetry
+
+from knack.util import todict, CLIError, CommandResultItem
 
 logger = azlogging.get_az_logger(__name__)
 

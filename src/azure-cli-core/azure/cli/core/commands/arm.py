@@ -7,19 +7,18 @@ import argparse
 import re
 from six import string_types
 
-from azure.cli.core.commands import (CliCommand,
-                                     get_op_handler,
-                                     command_table as main_command_table,
-                                     command_module_map as main_command_module_map,
-                                     CONFIRM_PARAM_NAME)
-from azure.cli.core.commands._introspection import extract_args_from_signature
+from azure.cli.core.commands import CliCommand, get_op_handler, CONFIRM_PARAM_NAME
+
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
 from azure.cli.core.application import APPLICATION, IterateValue
-from azure.cli.core.prompting import prompt_y_n, NoTTYException
 from azure.cli.core._config import az_config
 import azure.cli.core.azlogging as azlogging
-from azure.cli.core.util import CLIError, todict, shell_safe_json_parse
+from azure.cli.core.util import shell_safe_json_parse
 from azure.cli.core.profiles import ResourceType
+
+from knack.introspection import extract_args_from_signature
+from knack.prompting import prompt_y_n, NoTTYException
+from knack.util import todict, CLIError
 
 logger = azlogging.get_az_logger(__name__)
 
@@ -320,7 +319,7 @@ def _user_confirmed(confirmation, command_args):
         return False
 
 
-def cli_generic_update_command(module_name, name, getter_op, setter_op, factory=None,
+def cli_generic_update_command(context, module_name, name, getter_op, setter_op, factory=None,
                                setter_arg_name='parameters', table_transformer=None,
                                child_collection_prop_name=None, child_collection_key='name',
                                child_arg_name='item_name', custom_function_op=None,
@@ -474,11 +473,11 @@ def cli_generic_update_command(module_name, name, getter_op, setter_op, factory=
                      default=[], help='Remove a property or an element from a list.  Example: '
                      '{}'.format(remove_usage), metavar='LIST INDEX',
                      arg_group=group_name)
-    main_command_table[name] = cmd
-    main_command_module_map[name] = module_name
+    context.command_table[name] = cmd
+    context.command_module_map[name] = module_name
 
 
-def cli_generic_wait_command(module_name, name, getter_op, factory=None, exception_handler=None):
+def cli_generic_wait_command(context, module_name, name, getter_op, factory=None, exception_handler=None):
 
     if not isinstance(getter_op, string_types):
         raise ValueError("Getter operation must be a string. Got '{}'".format(type(getter_op)))
@@ -578,8 +577,8 @@ def cli_generic_wait_command(module_name, name, getter_op, factory=None, excepti
                      help=("Wait until the condition satisfies a custom JMESPath query. E.g. "
                            "provisioningState!='InProgress', "
                            "instanceView.statuses[?code=='PowerState/running']"))
-    main_command_table[name] = cmd
-    main_command_module_map[name] = module_name
+    context.command_table[name] = cmd
+    context.command_module_map[name] = module_name
 
 
 def verify_property(instance, condition):

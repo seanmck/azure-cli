@@ -3,24 +3,37 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import sys
 import os
+import sys
 
-import azure.cli.main
+from azure.cli.core import MainCommandsLoader, AzCli
+from azure.cli.core.parser import AzCliCommandParser
 import azure.cli.core.telemetry as telemetry
+
+
+def cli_main(cli, args):
+    from azure.cli.core._session import ACCOUNT, CONFIG, SESSION
+
+    azure_folder = cli.config.config_dir
+    ACCOUNT.load(os.path.join(azure_folder, 'azureProfile.json'))
+    CONFIG.load(os.path.join(azure_folder, 'az.json'))
+    SESSION.load(os.path.join(azure_folder, 'az.sess'), max_age=3600)
+
+    return cli.invoke(args)
+
+GLOBAL_CONFIG_DIR = os.getenv('AZURE_CONFIG_DIR', None) or os.path.expanduser(os.path.join('~', '.azure'))
+ENV_VAR_PREFIX = 'AZURE_'
+AZ_CLI = AzCli(cli_name='az',
+             config_dir=GLOBAL_CONFIG_DIR,
+             config_env_var_prefix=ENV_VAR_PREFIX,
+             commands_loader_cls=MainCommandsLoader,
+             parser_cls=AzCliCommandParser)
 
 try:
     telemetry.start()
-    args = sys.argv[1:]
 
-    # Check if we are in argcomplete mode - if so, we
-    # need to pick up our args from environment variables
-    if os.environ.get('_ARGCOMPLETE'):
-        comp_line = os.environ.get('COMP_LINE')
-        if comp_line:
-            args = comp_line.split()[1:]
-
-    exit_code = azure.cli.main.main(args)
+    exit_code = cli_main(AZ_CLI, sys.argv[1:])
+    
     if exit_code and exit_code != 0:
         telemetry.set_failure()
     else:

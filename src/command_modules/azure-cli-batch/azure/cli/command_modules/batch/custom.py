@@ -19,10 +19,11 @@ from azure.batch.models import (CertificateAddParameter, PoolStopResizeOptions, 
                                 TaskAddParameter, TaskConstraints, PoolUpdatePropertiesParameter,
                                 StartTask, BatchErrorException)
 
-from azure.cli.core.util import CLIError
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
 from azure.cli.core.profiles import get_sdk, ResourceType
 import azure.cli.core.azlogging as azlogging
+
+from knack.util import CLIError
 
 logger = azlogging.get_az_logger(__name__)
 

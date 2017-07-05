@@ -10,7 +10,7 @@ import tempfile
 
 from azure.cli.core.application import Application, Configuration, IterateAction
 from azure.cli.core.commands import CliCommand
-from azure.cli.core.util import CLIError
+from knack.util import CLIError
 
 
 class TestApplication(unittest.TestCase):

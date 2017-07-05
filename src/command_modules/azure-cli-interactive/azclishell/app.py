@@ -49,7 +49,7 @@ from azure.cli.core._profile import _SUBSCRIPTION_NAME, Profile
 from azure.cli.core._session import ACCOUNT, CONFIG, SESSION
 import azure.cli.core.telemetry as cli_telemetry
 from azure.cli.core.util import (show_version_info_exit, handle_exception)
-from azure.cli.core.util import CLIError
+from knack.util import CLIError
 
 
 SHELL_CONFIGURATION = azclishell.configuration.CONFIGURATION

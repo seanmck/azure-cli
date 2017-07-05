@@ -11,32 +11,20 @@ import time
 
 from OpenSSL import crypto
 from msrestazure.azure_exceptions import CloudError
-from azure.keyvault.models import (CertificateAttributes,
-                                   CertificatePolicy,
-                                   IssuerParameters,
-                                   KeyProperties,
-                                   LifetimeAction,
-                                   SecretProperties,
-                                   X509CertificateProperties,
-                                   SubjectAlternativeNames,
-                                   Trigger,
-                                   Action)
-from azure.keyvault.models import ActionType, KeyUsageType
-from azure.mgmt.keyvault.models import (VaultProperties,
-                                        AccessPolicyEntry,
-                                        Permissions,
-                                        CertificatePermissions,
-                                        KeyPermissions,
-                                        SecretPermissions,
-                                        StoragePermissions,
-                                        Sku,
-                                        SkuName)
-from azure.graphrbac import GraphRbacManagementClient
-import azure.cli.core.telemetry as telemetry
-from azure.cli.core.util import CLIError
-import azure.cli.core.azlogging as azlogging
 from azure.keyvault import KeyVaultClient
+from azure.keyvault.models import \
+    (Action, ActionType, KeyUsageType, CertificateAttributes, CertificatePolicy, IssuerParameters,
+     KeyProperties, LifetimeAction, SecretProperties, X509CertificateProperties, SubjectAlternativeNames, Trigger)
+from azure.mgmt.keyvault.models import \
+    (VaultProperties, AccessPolicyEntry, Permissions, CertificatePermissions, KeyPermissions, SecretPermissions,
+     StoragePermissions, Sku, SkuName)
+from azure.graphrbac import GraphRbacManagementClient
+
+import azure.cli.core.telemetry as telemetry
+import azure.cli.core.azlogging as azlogging
 from azure.cli.command_modules.keyvault._validators import secret_text_encoding_values
+
+from knack.util import CLIError
 
 logger = azlogging.get_az_logger(__name__)
 

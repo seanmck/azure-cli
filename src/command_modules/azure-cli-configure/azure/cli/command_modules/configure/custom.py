@@ -10,12 +10,6 @@ from six.moves import configparser
 import azure.cli.core.azlogging as azlogging
 from azure.cli.core._config import (GLOBAL_CONFIG_PATH, ENV_VAR_PREFIX, set_global_config,
                                     set_global_config_value, DEFAULTS_SECTION, get_config_parser)
-from azure.cli.core.util import CLIError
-from azure.cli.core.prompting import (prompt,
-                                      prompt_y_n,
-                                      prompt_choice_list,
-                                      prompt_pass,
-                                      NoTTYException)
 from azure.cli.command_modules.configure._consts import (OUTPUT_LIST, LOGIN_METHOD_LIST,
                                                          MSG_INTRO,
                                                          MSG_CLOSING,
@@ -28,6 +22,9 @@ from azure.cli.command_modules.configure._consts import (OUTPUT_LIST, LOGIN_METH
                                                          MSG_PROMPT_TELEMETRY,
                                                          MSG_PROMPT_FILE_LOGGING)
 from azure.cli.command_modules.configure._utils import get_default_from_config
+
+from knack.prompting import prompt, prompt_y_n, prompt_choice_list, prompt_pass, NoTTYException
+from knack.util import CLIError
 
 logger = azlogging.get_az_logger(__name__)
 

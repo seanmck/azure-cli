@@ -13,7 +13,7 @@ import yaml
 
 from azure.cli.core.application import APPLICATION, Configuration
 from azure.cli.core.commands import _update_command_definitions, BLACKLISTED_MODS
-from azure.cli.core.help_files import helps
+from knack.help_files import helps
 from azure.cli.core.commands.arm import add_id_parameters
 
 import azclishell.configuration as config

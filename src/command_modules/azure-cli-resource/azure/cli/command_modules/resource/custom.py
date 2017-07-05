@@ -27,12 +27,14 @@ from azure.mgmt.resource.managedapplications.models import ApplianceDefinition
 from azure.mgmt.resource.managedapplications.models import ApplianceProviderAuthorization
 
 from azure.cli.core.parser import IncorrectUsageError
-from azure.cli.core.prompting import prompt, prompt_pass, prompt_t_f, prompt_choice_list, prompt_int, NoTTYException
-from azure.cli.core.util import CLIError, get_file_json, shell_safe_json_parse
+from azure.cli.core.util import get_file_json, shell_safe_json_parse
 import azure.cli.core.azlogging as azlogging
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
 from azure.cli.core.commands.arm import is_valid_resource_id, parse_resource_id
 from azure.cli.core.profiles import get_sdk, ResourceType
+
+from knack.prompting import prompt, prompt_pass, prompt_t_f, prompt_choice_list, prompt_int, NoTTYException
+from knack.util import CLIError
 
 from ._client_factory import (_resource_client_factory,
                               _resource_policy_client_factory,

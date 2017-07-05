@@ -8,7 +8,7 @@ import os
 import re
 from datetime import datetime, timedelta
 
-from azure.cli.core.util import CLIError
+from knack.util import CLIError
 from azure.cli.core._profile import CLOUD
 from azure.cli.core._config import az_config
 from azure.cli.core.profiles import get_sdk, ResourceType
