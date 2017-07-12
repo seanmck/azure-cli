@@ -13,10 +13,6 @@ import colorama
 
 from knack.output import format_json, format_json_color, format_table, format_tsv
 
-import azure.cli.core.azlogging as azlogging
-
-logger = azlogging.get_az_logger(__name__)
-
 
 def format_text(obj):
     result = obj.result

@@ -5,16 +5,28 @@
 
 __version__ = "2.0.11+dev"
 
-# pylint: disable=unused-import
-# The names are imported here to shorten the name references to core utilities in azure.cli.core package.
+import os
 
 from knack.cli import CLI
 from knack.commands import CLICommandsLoader, CLICommand
+from knack.introspection import extract_args_from_signature, extract_full_summary_from_signature
+from knack.log import get_logger
+import six
 
-from .azlogging import get_az_logger, configure_logging
+ARGCOMPLETE_ENV_NAME = '_ARGCOMPLETE'
 
+logger = get_logger(__name__)
 
 class AzCli(CLI):
+
+    def __init__(self, **kwargs):
+        super(AzCli, self).__init__(**kwargs)
+        self.session =  {
+            'headers': {},  # the x-ms-client-request-id is generated before a command is to execute
+            'command': 'unknown',
+            'completer_active': ARGCOMPLETE_ENV_NAME in os.environ,
+            'query_active': False
+        }
 
     def get_cli_version(output):
         from azure.cli.core.util import show_version_info_exit
@@ -24,6 +36,8 @@ class AzCli(CLI):
 class AzCliCommand(CLICommand):
 
     def _resolve_default_value_from_cfg_file(self, arg, overrides):
+        from azure.cli.core._config import DEFAULTS_SECTION
+
         if not hasattr(arg.type, 'required_tooling'):
             required = arg.type.settings.get('required', False)
             setattr(arg.type, 'required_tooling', required)
@@ -31,19 +45,68 @@ class AzCliCommand(CLICommand):
             def_config = overrides.settings.pop('configured_default', None)
             setattr(arg.type, 'default_name_tooling', def_config)
             # same blunt mechanism like we handled id-parts, for create command, no name default
-            if (self.name.split()[-1] == 'create' and
-                    overrides.settings.get('metavar', None) == 'NAME'):
+            if (self.name.split()[-1] == 'create' and overrides.settings.get('metavar', None) == 'NAME'):
                 return
             setattr(arg.type, 'configured_default_applied', True)
-            config_value = az_config.get(DEFAULTS_SECTION, def_config, None)
+            print('Context = {}', type(self.ctx))
+            config_value = self.ctx.config.get(DEFAULTS_SECTION, def_config, None)
             if config_value:
+                logger.warning("Using default '%s' for arg %s", config_value, arg.name)
                 overrides.settings['default'] = config_value
                 overrides.settings['required'] = False
 
     def update_argument(self, param_name, argtype):
         arg = self.arguments[param_name]
-        self._resolve_default_value_from_cfg_file(param_name, argtype)
+        self._resolve_default_value_from_cfg_file(arg, argtype)
         arg.type.update(other=argtype)
+
+
+class MainCommandsLoader(CLICommandsLoader):
+
+    def __init__(self, ctx=None):
+        super(MainCommandsLoader, self).__init__(ctx)
+        from azure.cli.command_modules.redis import RedisCommandsLoader
+        from azure.cli.command_modules.profile import ProfileCommandsLoader
+        from azure.cli.command_modules.cloud import CloudCommandsLoader
+        from azure.cli.command_modules.feedback import FeedbackCommandsLoader
+        self.loaders = [
+            RedisCommandsLoader(ctx=self.ctx),
+            ProfileCommandsLoader(ctx=self.ctx),
+            CloudCommandsLoader(ctx=self.ctx),
+            FeedbackCommandsLoader(ctx=self.ctx)
+        ]
+
+    def load_command_table(self, args):
+        for loader in self.loaders:
+            self.command_table.update(loader.load_command_table(args))
+        return self.command_table
+
+    def load_arguments(self, command):
+        from azure.cli.core.commands.parameters import resource_group_name_type, location_type, deployment_name_type
+
+        for loader in self.loaders:
+            loader.load_arguments(command)
+            self.argument_registry.arguments.update(loader.argument_registry.arguments)
+
+        self.register_cli_argument('', 'resource_group_name', resource_group_name_type)
+        self.register_cli_argument('', 'location', location_type)
+        self.register_cli_argument('', 'deployment_name', deployment_name_type)
+        super(MainCommandsLoader, self).load_arguments(command)
+
+
+class AzCommandsLoader(CLICommandsLoader):
+
+    def __init__(self, ctx=None):
+        super(AzCommandsLoader, self).__init__(ctx=ctx)
+        self.command_module_map = {}
+
+    def cli_generic_update_command(self, *args, **kwargs):
+        from azure.cli.core.commands.arm import cli_generic_update_command as command
+        return command(self, *args, **kwargs)
+
+    def cli_generic_wait_command(self, *args, **kwargs):
+        from azure.cli.core.commands.arm import cli_generic_wait_command as command
+        return command(self, *args, **kwargs)
 
     # TODO: should not have to duplicate this logic just to use a derived CLICommand class
     def create_command(self, module_name, name, operation, **kwargs):  # pylint: disable=unused-argument
@@ -82,46 +145,3 @@ class AzCliCommand(CLICommand):
                              help='Do not prompt for confirmation')
         return cmd
 
-
-class MainCommandsLoader(CLICommandsLoader):
-
-    def __init__(self, ctx=None):
-        super(MainCommandsLoader, self).__init__(ctx)
-        from azure.cli.command_modules.redis import RedisCommandsLoader
-        self.loaders = [
-            RedisCommandsLoader(ctx=self.ctx)
-        ]
-
-    def load_command_table(self, args):
-        for loader in self.loaders:
-            self.command_table.update(loader.load_command_table(args))
-        return self.command_table
-
-    def load_arguments(self, command):
-        from azure.cli.core.commands.parameters import resource_group_name_type, location_type, deployment_name_type
-
-
-
-        for loader in self.loaders:
-            loader.load_arguments(command)
-            self.argument_registry.arguments.update(loader.argument_registry.arguments)
-
-        self.register_cli_argument('', 'resource_group_name', resource_group_name_type)
-        self.register_cli_argument('', 'location', location_type)
-        self.register_cli_argument('', 'deployment_name', deployment_name_type)
-        super(MainCommandsLoader, self).load_arguments(command)
-
-
-class AzCommandsLoader(CLICommandsLoader):
-
-    def __init__(self, ctx=None):
-        super(AzCommandsLoader, self).__init__(ctx=ctx)
-        self.command_module_map = {}
-
-    def cli_generic_update_command(self, *args, **kwargs):
-        from azure.cli.core.commands.arm import cli_generic_update_command as command
-        return command(self, *args, **kwargs)
-
-    def cli_generic_wait_command(self, *args, **kwargs):
-        from azure.cli.core.commands.arm import cli_generic_wait_command as command
-        return command(self, *args, **kwargs)

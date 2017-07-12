@@ -8,17 +8,15 @@ import sys
 import argparse
 import argcomplete
 
-import azure.cli.core.azlogging as azlogging
 import azure.cli.core.telemetry as telemetry
 import azure.cli.core._help as _help
 from azure.cli.core._pkg_util import handle_module_not_installed
 
+from knack.log import get_logger
 from knack.parser import CLICommandParser
 from knack.util import CLIError
 
-
-logger = azlogging.get_az_logger(__name__)
-
+logger = get_logger(__name__)
 
 ARGPARSE_SUPPORTED_KWARGS = [
     'option_strings',
@@ -50,10 +48,12 @@ class AzCliCommandParser(CLICommandParser):
     """ArgumentParser implementation specialized for the Azure CLI utility."""
 
     def _add_argument(self, obj, arg):
+        # TODO: This logic should be part of knack, not az
         options_list = arg.options_list
         argparse_options = {name: value for name, value in arg.options.items() if name in ARGPARSE_SUPPORTED_KWARGS}
         return obj.add_argument(*options_list, **argparse_options)
 
+    # TODO: If not for _add_argument this would not need to be overridden with 99% same implementation
     def load_command_table(self, cmd_tbl):
         """Load a command table into our parser."""
         # If we haven't already added a subparser, we
@@ -95,14 +95,7 @@ class AzCliCommandParser(CLICommandParser):
                         argument_groups[arg.arg_group] = group
                     param = self._add_argument(group, arg)
                 else:
-                    try:
-                        param = self._add_argument(command_parser, arg)
-                    except argparse.ArgumentError:
-                        dest = arg.options['dest']
-                        if dest in ['no_wait', 'raw']:
-                            pass
-                        else:
-                            raise
+                    param = self._add_argument(command_parser, arg)
                 param.completer = arg.completer
 
             command_parser.set_defaults(

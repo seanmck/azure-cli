@@ -5,11 +5,7 @@
 
 import os
 
-from azure.cli.core.application import APPLICATION
-import azure.cli.core.azlogging as azlogging
-
-logger = azlogging.get_az_logger(__name__)
-
+from azure.cli.core.application import AZ_CLI
 
 def _generate_ssh_keys(private_key_filepath, public_key_filepath):
     import paramiko
@@ -76,4 +72,4 @@ def _handle_container_ssh_file(**kwargs):
     args.ssh_key_value = content
 
 
-APPLICATION.register(APPLICATION.COMMAND_PARSER_PARSED, _handle_container_ssh_file)
+AZ_CLI.register(AZ_CLI.COMMAND_PARSER_PARSED, _handle_container_ssh_file)

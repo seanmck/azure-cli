@@ -12,15 +12,16 @@ import os.path
 from copy import deepcopy
 from enum import Enum
 
-import azure.cli.core.azlogging as azlogging
+from azure.cli.core.application import AZ_CLI
 from azure.cli.core._environment import get_config_dir
 from azure.cli.core._session import ACCOUNT
 from azure.cli.core.util import get_file_json
 from azure.cli.core.cloud import get_active_cloud, set_cloud_subscription, init_known_clouds
 
+from knack.log import get_logger
 from knack.util import CLIError
 
-logger = azlogging.get_az_logger(__name__)
+
 
 # Names below are used by azure-xplat-cli to persist account information into
 # ~/.azure/azureProfile.json or osx/keychainer or windows secure storage,
@@ -74,6 +75,7 @@ _AUTH_CTX_FACTORY = _authentication_context_factory
 init_known_clouds(force=True)
 CLOUD = get_active_cloud()
 
+logger = get_logger(__name__)
 logger.debug('Current cloud config:\n%s', str(CLOUD))
 
 

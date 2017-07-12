@@ -21,11 +21,8 @@ from azure.batch.models import (CertificateAddParameter, PoolStopResizeOptions, 
 
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
 from azure.cli.core.profiles import get_sdk, ResourceType
-import azure.cli.core.azlogging as azlogging
 
 from knack.util import CLIError
-
-logger = azlogging.get_az_logger(__name__)
 
 
 def transfer_doc(source_func, *additional_source_funcs):
@@ -76,7 +73,6 @@ def update_account(client, resource_group_name, account_name,
 
 
 def login_account(client, resource_group_name, account_name, shared_key_auth=False):
-    from azure.cli.core._config import az_config, set_global_config
 
     account = client.get(resource_group_name=resource_group_name,
                          account_name=account_name)

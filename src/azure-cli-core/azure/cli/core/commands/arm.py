@@ -7,20 +7,20 @@ import argparse
 import re
 from six import string_types
 
-from azure.cli.core.commands import CliCommand, get_op_handler, CONFIRM_PARAM_NAME
-
+from azure.cli.core import AzCliCommand
+from azure.cli.core.commands import get_op_handler, CONFIRM_PARAM_NAME
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
-from azure.cli.core.application import APPLICATION, IterateValue
-from azure.cli.core._config import az_config
-import azure.cli.core.azlogging as azlogging
+from azure.cli.core.application import AZ_CLI, IterateValue
 from azure.cli.core.util import shell_safe_json_parse
 from azure.cli.core.profiles import ResourceType
 
+from knack.events import EVENT_CMDLOADER_LOAD_ARGUMENTS, EVENT_INVOKER_CMD_TBL_LOADED
 from knack.introspection import extract_args_from_signature
+from knack.log import get_logger
 from knack.prompting import prompt_y_n, NoTTYException
 from knack.util import todict, CLIError
 
-logger = azlogging.get_az_logger(__name__)
+logger = get_logger(__name__)
 
 regex = re.compile(
     '/subscriptions/(?P<subscription>[^/]*)(/resource[gG]roups/(?P<resource_group>[^/]*))?'
@@ -202,7 +202,13 @@ def resource_exists(resource_group, name, namespace, type, **_):  # pylint: disa
     return existing
 
 
-def add_id_parameters(command_table):
+def add_id_parameters(_, **kwargs):  # pylint: disable=unused-argument
+
+    command_table = kwargs.get('cmd_tbl')
+
+    if not command_table:
+        return
+
     def split_action(arguments):
         class SplitAction(argparse.Action):  # pylint: disable=too-few-public-methods
             def __call__(self, parser, namespace, values, option_string=None):
@@ -286,10 +292,7 @@ def add_id_parameters(command_table):
     for command in command_table.values():
         command_loaded_handler(command)
 
-
-APPLICATION.register(APPLICATION.COMMAND_TABLE_PARAMS_LOADED, add_id_parameters)
-
-APPLICATION.register(APPLICATION.COMMAND_TABLE_LOADED, add_id_parameters)
+AZ_CLI.register_event(EVENT_INVOKER_CMD_TBL_LOADED, add_id_parameters)
 
 add_usage = '--add property.listProperty <key=value, string or JSON string>'
 set_usage = '--set property1.property2=<value>'
@@ -458,8 +461,8 @@ def cli_generic_update_command(context, module_name, name, getter_op, setter_op,
                 setattr(namespace, 'ordered_arguments', [])
             namespace.ordered_arguments.append((option_string, values))
 
-    cmd = CliCommand(name, handler, table_transformer=table_transformer,
-                     arguments_loader=arguments_loader, formatter_class=formatter_class)
+    cmd = AzCliCommand(context.ctx, name, handler, table_transformer=table_transformer,
+                       arguments_loader=arguments_loader, formatter_class=formatter_class)
     group_name = 'Generic Update'
     cmd.add_argument('properties_to_set', '--set', nargs='+', action=OrderedArgsAction, default=[],
                      help='Update an object by specifying a property path and value to set.'
@@ -559,7 +562,7 @@ def cli_generic_wait_command(context, module_name, name, getter_op, factory=None
 
         return CLIError('Wait operation timed-out after {} seconds'.format(timeout))
 
-    cmd = CliCommand(name, handler, arguments_loader=arguments_loader)
+    cmd = AzCliCommand(context.ctx, name, handler, arguments_loader=arguments_loader)
     group_name = 'Wait Condition'
     cmd.add_argument('timeout', '--timeout', default=3600, arg_group=group_name, type=int,
                      help='maximum wait in seconds')

@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 # pylint: disable=line-too-long
-from azure.cli.core.application import APPLICATION
+from azure.cli.core.application import AZ_CLI
 from azure.cli.core.commands import cli_command
 from azure.cli.core.commands.arm import cli_generic_update_command
 from azure.cli.core.util import empty_on_404
@@ -18,7 +18,7 @@ def deprecate(argv):
         raise CLIError("All 'appservice web' commands have been renamed to 'webapp'")
 
 
-APPLICATION.register(APPLICATION.COMMAND_PARSER_PARSING, deprecate)
+AZ_CLI.register(AZ_CLI.COMMAND_PARSER_PARSING, deprecate)
 
 
 def output_slots_in_table(slots):

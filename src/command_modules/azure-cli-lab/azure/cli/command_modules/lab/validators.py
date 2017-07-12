@@ -15,10 +15,7 @@ from azure.mgmt.devtestlabs.models.shared_public_ip_address_configuration import
     SharedPublicIpAddressConfiguration
 from azure.mgmt.devtestlabs.models.inbound_nat_rule import InboundNatRule
 from azure.graphrbac import GraphRbacManagementClient
-import azure.cli.core.azlogging as azlogging
 from ._client_factory import (get_devtestlabs_management_client)
-
-logger = azlogging.get_az_logger(__name__)
 
 
 # Odata filter for name

@@ -31,7 +31,6 @@ class TestCommandWithConfiguredDefaults(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Ensure initialization has occurred correctly
-        import azure.cli.main
         logging.basicConfig(level=logging.DEBUG)
 
     @classmethod

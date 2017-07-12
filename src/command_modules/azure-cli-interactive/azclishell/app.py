@@ -39,11 +39,10 @@ from azclishell.progress import progress_view
 from azclishell.telemetry import SHELL_TELEMETRY as telemetry
 from azclishell.util import get_window_dim, parse_quotes, get_os_clear_screen_word
 
-import azure.cli.core.azlogging as azlogging
 from azure.cli.core.application import Configuration
 from azure.cli.core.commands import LongRunningOperation, get_op_handler
 from azure.cli.core.cloud import get_active_cloud_name
-from azure.cli.core._config import az_config, DEFAULTS_SECTION
+from azure.cli.core._config import DEFAULTS_SECTION
 from azure.cli.core._environment import get_config_dir
 from azure.cli.core._profile import _SUBSCRIPTION_NAME, Profile
 from azure.cli.core._session import ACCOUNT, CONFIG, SESSION
@@ -669,17 +668,17 @@ class Shell(object):
 
     def progress_patch(self, _=False):
         """ forces to use the Shell Progress """
-        from azure.cli.core.application import APPLICATION
+        from azure.cli.core.application import AZ_CLI
 
         from azclishell.progress import ShellProgressView
-        APPLICATION.progress_controller.init_progress(ShellProgressView())
-        return APPLICATION.progress_controller
+        AZ_CLI.progress_controller.init_progress(ShellProgressView())
+        return AZ_CLI.progress_controller
 
     def run(self):
         """ starts the REPL """
         telemetry.start()
-        from azure.cli.core.application import APPLICATION
-        APPLICATION.get_progress_controller = self.progress_patch
+        from azure.cli.core.application import AZ_CLI
+        AZ_CLI.get_progress_controller = self.progress_patch
 
         from azclishell.configuration import SHELL_HELP
         self.cli.buffers['symbols'].reset(

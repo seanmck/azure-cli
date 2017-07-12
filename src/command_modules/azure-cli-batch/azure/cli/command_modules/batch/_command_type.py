@@ -512,7 +512,6 @@ class AzureBatchDataPlaneCommand(object):
             from msrest.exceptions import ValidationError, ClientRequestError
             from azure.batch.models import BatchErrorException
             from knack.util import CLIError
-            from azure.cli.core._config import az_config
             from azure.cli.core.commands import _user_confirmed
 
             if self._cancel_operation(kwargs, az_config, _user_confirmed):
@@ -864,7 +863,6 @@ def validate_client_parameters(namespace):
     """Retrieves Batch connection parameters from environment variables"""
     from azure.mgmt.batch import BatchManagementClient
     from azure.cli.core.commands.client_factory import get_mgmt_service_client
-    from azure.cli.core._config import az_config
 
     # simply try to retrieve the remaining variables from environment variables
     if not namespace.account_name:

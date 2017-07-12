@@ -32,10 +32,6 @@ from knack.util import CLIError
 
 from azure_devtools.scenario_tests.const import ENV_LIVE_TEST
 
-# TODO Should not depend on azure.cli.main package here.
-# Will be ok if this test file is not part of azure.cli.core.utils
-from azure.cli.main import main as cli_main
-
 from azure.cli.core import __version__ as core_version
 import azure.cli.core._debug as _debug
 from azure.cli.core._profile import Profile, CLOUD

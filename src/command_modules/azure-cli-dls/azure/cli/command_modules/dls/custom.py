@@ -17,12 +17,9 @@ from azure.datalake.store.enums import ExpiryOptionType
 from azure.datalake.store.multithread import (ADLUploader, ADLDownloader)
 from azure.cli.command_modules.dls._client_factory import (cf_dls_filesystem)
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
-import azure.cli.core.azlogging as azlogging
 from azure.cli.core.profiles import ResourceType
 
 from knack.util import CLIError
-
-logger = azlogging.get_az_logger(__name__)
 
 
 # account customiaztions

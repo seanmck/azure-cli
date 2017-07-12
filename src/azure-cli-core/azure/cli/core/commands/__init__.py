@@ -19,19 +19,18 @@ from importlib import import_module
 
 from knack.arguments import ArgumentRegistry, CLICommandArgument
 from knack.introspection import extract_args_from_signature, extract_full_summary_from_signature
+from knack.log import get_logger
 from knack.prompting import prompt_y_n, NoTTYException
 from knack.util import CLIError
 
 import six
 from six import string_types, reraise
 
-import azure.cli.core.azlogging as azlogging
 import azure.cli.core.telemetry as telemetry
-from azure.cli.core._config import az_config, DEFAULTS_SECTION
 from azure.cli.core.profiles import ResourceType, supported_api_version
 from azure.cli.core.profiles._shared import get_versioned_sdk_path
 
-logger = azlogging.get_az_logger(__name__)
+logger = get_logger(__name__)
 
 # 1 hour in milliseconds
 DEFAULT_QUERY_TIME_RANGE = 3600000
@@ -80,8 +79,8 @@ class LongRunningOperation(object):  # pylint: disable=too-few-public-methods
         self.start_msg = start_msg
         self.finish_msg = finish_msg
         self.poller_done_interval_ms = poller_done_interval_ms
-        from azure.cli.core.application import APPLICATION
-        self.progress_controller = progress_controller or APPLICATION.get_progress_controller()
+        from azure.cli.core.application import AZ_CLI
+        self.progress_controller = progress_controller or AZ_CLI.get_progress_controller()
         self.deploy_dict = {}
         self.last_progress_report = datetime.datetime.now()
 
@@ -229,71 +228,71 @@ class CommandTable(dict):
         return wrapped
 
 
-class CliCommand(object):  # pylint:disable=too-many-instance-attributes
+#class CliCommand(object):  # pylint:disable=too-many-instance-attributes
 
-    def __init__(self, name, handler, description=None, table_transformer=None,
-                 arguments_loader=None, description_loader=None,
-                 formatter_class=None, deprecate_info=None):
-        self.name = name
-        self.handler = handler
-        self.help = None
-        self.description = description_loader \
-            if description_loader and CliCommand._should_load_description() \
-            else description
-        self.arguments = {}
-        self.arguments_loader = arguments_loader
-        self.table_transformer = table_transformer
-        self.formatter_class = formatter_class
-        self.deprecate_info = deprecate_info
+#    def __init__(self, name, handler, description=None, table_transformer=None,
+#                 arguments_loader=None, description_loader=None,
+#                 formatter_class=None, deprecate_info=None):
+#        self.name = name
+#        self.handler = handler
+#        self.help = None
+#        self.description = description_loader \
+#            if description_loader and CliCommand._should_load_description() \
+#            else description
+#        self.arguments = {}
+#        self.arguments_loader = arguments_loader
+#        self.table_transformer = table_transformer
+#        self.formatter_class = formatter_class
+#        self.deprecate_info = deprecate_info
 
-    @staticmethod
-    def _should_load_description():
-        from azure.cli.core.application import APPLICATION
+#    @staticmethod
+#    def _should_load_description():
+#        from azure.cli.core.application import AZ_CLI
 
-        return not APPLICATION.session['completer_active']
+#        return not AZ_CLI.session['completer_active']
 
-    def load_arguments(self):
-        if self.arguments_loader:
-            self.arguments.update(self.arguments_loader())
+#    def load_arguments(self):
+#        if self.arguments_loader:
+#            self.arguments.update(self.arguments_loader())
 
-    def add_argument(self, param_name, *option_strings, **kwargs):
-        dest = kwargs.pop('dest', None)
-        argument = CLICommandArgument(
-            dest or param_name, options_list=option_strings, **kwargs)
-        self.arguments[param_name] = argument
+#    def add_argument(self, param_name, *option_strings, **kwargs):
+#        dest = kwargs.pop('dest', None)
+#        argument = CLICommandArgument(
+#            dest or param_name, options_list=option_strings, **kwargs)
+#        self.arguments[param_name] = argument
 
-    def update_argument(self, param_name, argtype):
-        arg = self.arguments[param_name]
-        self._resolve_default_value_from_cfg_file(arg, argtype)
-        arg.type.update(other=argtype)
+#    def update_argument(self, param_name, argtype):
+#        arg = self.arguments[param_name]
+#        self._resolve_default_value_from_cfg_file(arg, argtype)
+#        arg.type.update(other=argtype)
 
-    def _resolve_default_value_from_cfg_file(self, arg, overrides):
-        if not hasattr(arg.type, 'required_tooling'):
-            required = arg.type.settings.get('required', False)
-            setattr(arg.type, 'required_tooling', required)
-        if 'configured_default' in overrides.settings:
-            def_config = overrides.settings.pop('configured_default', None)
-            setattr(arg.type, 'default_name_tooling', def_config)
-            # same blunt mechanism like we handled id-parts, for create command, no name default
-            if (self.name.split()[-1] == 'create' and
-                    overrides.settings.get('metavar', None) == 'NAME'):
-                return
-            setattr(arg.type, 'configured_default_applied', True)
-            config_value = az_config.get(DEFAULTS_SECTION, def_config, None)
-            if config_value:
-                overrides.settings['default'] = config_value
-                overrides.settings['required'] = False
+#    def _resolve_default_value_from_cfg_file(self, arg, overrides):
+#        if not hasattr(arg.type, 'required_tooling'):
+#            required = arg.type.settings.get('required', False)
+#            setattr(arg.type, 'required_tooling', required)
+#        if 'configured_default' in overrides.settings:
+#            def_config = overrides.settings.pop('configured_default', None)
+#            setattr(arg.type, 'default_name_tooling', def_config)
+#            # same blunt mechanism like we handled id-parts, for create command, no name default
+#            if (self.name.split()[-1] == 'create' and
+#                    overrides.settings.get('metavar', None) == 'NAME'):
+#                return
+#            setattr(arg.type, 'configured_default_applied', True)
+#            config_value = az_config.get(DEFAULTS_SECTION, def_config, None)
+#            if config_value:
+#                overrides.settings['default'] = config_value
+#                overrides.settings['required'] = False
 
-    def execute(self, **kwargs):
-        return self(**kwargs)
+#    def execute(self, **kwargs):
+#        return self(**kwargs)
 
-    def __call__(self, *args, **kwargs):
-        if self.deprecate_info is not None:
-            text = 'This command is deprecating and will be removed in future releases.'
-            if self.deprecate_info:
-                text += " Use '{}' instead.".format(self.deprecate_info)
-            logger.warning(text)
-        return self.handler(*args, **kwargs)
+#    def __call__(self, *args, **kwargs):
+#        if self.deprecate_info is not None:
+#            text = 'This command is deprecating and will be removed in future releases.'
+#            if self.deprecate_info:
+#                text += " Use '{}' instead.".format(self.deprecate_info)
+#            logger.warning(text)
+#        return self.handler(*args, **kwargs)
 
 
 command_table = CommandTable()

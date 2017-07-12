@@ -592,7 +592,7 @@ Global Arguments
     def test_help_loads(self):
         app = Application()
         app.initialize(Configuration())
-        with mock.patch('azure.cli.core.commands.arm.APPLICATION', app):
+        with mock.patch('azure.cli.core.commands.arm.AZ_CLI', app):
             from azure.cli.core.commands.arm import add_id_parameters
             parser_dict = {}
             cmd_tbl = app.configuration.get_command_table()

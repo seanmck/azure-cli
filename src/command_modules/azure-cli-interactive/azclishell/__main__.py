@@ -18,7 +18,7 @@ from azclishell.az_lexer import AzLexer
 from azclishell.color_styles import style_factory
 from azclishell.frequency_heuristic import frequent_user
 
-from azure.cli.core.application import APPLICATION
+from azure.cli.core.application import AZ_CLI
 from azure.cli.core._session import ACCOUNT, CONFIG, SESSION
 from azure.cli.core._environment import get_config_dir as cli_config_dir
 from azure.cli.core.commands.client_factory import ENV_ADDITIONAL_USER_AGENT
@@ -64,7 +64,7 @@ def main(style=None):
         lexer=AzLexer,
         history=FileHistory(
             os.path.join(shell_config_dir(), config.get_history())),
-        app=APPLICATION,
+        app=AZ_CLI,
         styles=style_obj,
         user_feedback=ask_feedback
     )

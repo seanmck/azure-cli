@@ -20,12 +20,9 @@ from azure.mgmt.datalake.analytics.job.models import (JobType,
 from azure.mgmt.datalake.analytics.catalog.models import (DataLakeAnalyticsCatalogCredentialCreateParameters,
                                                           DataLakeAnalyticsCatalogCredentialUpdateParameters)
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
-import azure.cli.core.azlogging as azlogging
 
 from knack.prompting import prompt_pass, NoTTYException
 from knack.util import CLIError
-
-logger = azlogging.get_az_logger(__name__)
 
 
 # account customiaztions

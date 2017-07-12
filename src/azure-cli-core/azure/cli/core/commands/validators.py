@@ -5,10 +5,11 @@
 
 import time
 import random
-import azure.cli.core.azlogging as azlogging
 from azure.cli.core.profiles import ResourceType
 
-logger = azlogging.get_az_logger(__name__)
+from knack.log import get_logger
+
+logger = get_logger(__name__)
 
 
 def validate_tags(ns):

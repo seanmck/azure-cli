@@ -11,13 +11,12 @@ from azure.cli.core.commands import register_cli_argument
 from azure.cli.core.commands.validators import validate_tag, validate_tags
 from azure.cli.core.commands.validators import generate_deployment_name
 from azure.cli.core.profiles import get_sdk, ResourceType, supported_api_version
-import azure.cli.core.azlogging as azlogging
 
 from knack.arguments import CLIArgumentType, CaseInsensitiveList, enum_choice_list
+from knack.log import get_logger
 from knack.util import CLIError
 
-logger = azlogging.get_az_logger(__name__)
-
+logger = get_logger(__name__)
 
 def get_subscription_locations():
     from azure.cli.core.commands.client_factory import get_subscription_service_client

@@ -23,11 +23,8 @@ def cli_main(cli, args):
 
 GLOBAL_CONFIG_DIR = os.getenv('AZURE_CONFIG_DIR', None) or os.path.expanduser(os.path.join('~', '.azure'))
 ENV_VAR_PREFIX = 'AZURE_'
-AZ_CLI = AzCli(cli_name='az',
-             config_dir=GLOBAL_CONFIG_DIR,
-             config_env_var_prefix=ENV_VAR_PREFIX,
-             commands_loader_cls=MainCommandsLoader,
-             parser_cls=AzCliCommandParser)
+
+from azure.cli.core.application import AZ_CLI
 
 try:
     telemetry.start()

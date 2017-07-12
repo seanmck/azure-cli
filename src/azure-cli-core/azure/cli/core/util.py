@@ -9,14 +9,13 @@ import json
 import base64
 import binascii
 
+from azure.cli.core._pkg_util import COMPONENT_PREFIX, CLI_PACKAGE_NAME
+
+from knack.log import get_logger
 from knack.util import CLIError, to_snake_case
 import six
-import azure.cli.core.azlogging as azlogging
 
-CLI_PACKAGE_NAME = 'azure-cli'
-COMPONENT_PREFIX = 'azure-cli-'
-
-logger = azlogging.get_az_logger(__name__)
+logger = get_logger(__name__)
 
 
 def handle_exception(ex):

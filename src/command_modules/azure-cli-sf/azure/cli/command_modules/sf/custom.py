@@ -17,7 +17,6 @@ except ImportError:
     from urlparse import urlparse, urlunparse  # pylint: disable=import-error
 
 import requests
-import azure.cli.core.azlogging as azlogging
 
 from azure.cli.core._environment import get_config_dir
 from azure.cli.core._config import GLOBAL_CONFIG_DIR, ENV_VAR_PREFIX
@@ -28,8 +27,6 @@ from knack.util import CLIError
 # Really the CLI should do this for us but I cannot see how to get it to
 CONFIG_PATH = os.path.join(get_config_dir(), "config")
 az_config = CLIConfig(config_dir=GLOBAL_CONFIG_DIR, config_env_var_prefix=ENV_VAR_PREFIX)
-
-logger = azlogging.get_az_logger(__name__)
 
 
 def sf_create_compose_application(client, compose_file, application_id, repo_user=None, encrypted=False,

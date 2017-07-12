@@ -8,18 +8,18 @@ import unittest
 import os
 import tempfile
 
-from azure.cli.core.application import Application, Configuration, IterateAction
+from azure.cli.core.application import AZ_CLI, IterateAction
 from azure.cli.core.commands import CliCommand
 from knack.util import CLIError
 
 
 class TestApplication(unittest.TestCase):
     def test_client_request_id_is_not_assigned_when_application_is_created(self):
-        app = Application()
+        app = AZ_CLI
         self.assertNotIn('x-ms-client-request-id', app.session['headers'])
 
     def test_client_request_id_is_refreshed_correctly(self):
-        app = Application()
+        app = AZ_CLI
         app.refresh_request_id()
         self.assertIn('x-ms-client-request-id', app.session['headers'])
 
@@ -54,7 +54,7 @@ class TestApplication(unittest.TestCase):
         def other_handler(**kwargs):
             self.assertEqual(kwargs['args'], 'secret sauce')
 
-        app = Application()
+        app = AZ_CLI
         app.initialize(Configuration())
 
         app.raise_event('was_handler_called', args=handler_called)

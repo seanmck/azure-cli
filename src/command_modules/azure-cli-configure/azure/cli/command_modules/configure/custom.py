@@ -7,7 +7,6 @@ from __future__ import print_function
 import os
 from six.moves import configparser
 
-import azure.cli.core.azlogging as azlogging
 from azure.cli.core._config import (GLOBAL_CONFIG_PATH, ENV_VAR_PREFIX, set_global_config,
                                     set_global_config_value, DEFAULTS_SECTION, get_config_parser)
 from azure.cli.command_modules.configure._consts import (OUTPUT_LIST, LOGIN_METHOD_LIST,
@@ -26,7 +25,6 @@ from azure.cli.command_modules.configure._utils import get_default_from_config
 from knack.prompting import prompt, prompt_y_n, prompt_choice_list, prompt_pass, NoTTYException
 from knack.util import CLIError
 
-logger = azlogging.get_az_logger(__name__)
 
 answers = {}
 

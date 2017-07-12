@@ -31,7 +31,6 @@ You can change your telemetry settings with `az configure`.
 
 
 def show_privacy_statement():
-    from azure.cli.core._config import az_config, set_global_config_value
     first_ran = az_config.getboolean('core', 'first_run', fallback=False)
     if not first_ran:
         print(PRIVACY_STATEMENT, file=sys.stdout)

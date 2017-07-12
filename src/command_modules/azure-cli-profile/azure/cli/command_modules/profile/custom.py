@@ -5,19 +5,28 @@
 
 from __future__ import print_function
 
-from azure.cli.core import get_az_logger
 from azure.cli.core._profile import Profile
 
+from knack.log import get_logger
 from knack.prompting import prompt_pass, NoTTYException
 from knack.util import CLIError
 
-logger = get_az_logger(__name__)
+logger = get_logger(__name__)
 
 
 def load_subscriptions(all_clouds=False):
     profile = Profile()
     subscriptions = profile.load_cached_subscriptions(all_clouds)
     return subscriptions
+
+
+def get_subscription_id_list(prefix, **kwargs):  # pylint: disable=unused-argument
+    subscriptions = load_subscriptions()
+    result = []
+    for subscription in subscriptions:
+        result.append(subscription['id'])
+        result.append(subscription['name'])
+    return result
 
 
 def list_subscriptions(all=False):  # pylint: disable=redefined-builtin

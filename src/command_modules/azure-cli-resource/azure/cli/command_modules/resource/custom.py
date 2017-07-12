@@ -28,7 +28,6 @@ from azure.mgmt.resource.managedapplications.models import ApplianceProviderAuth
 
 from azure.cli.core.parser import IncorrectUsageError
 from azure.cli.core.util import get_file_json, shell_safe_json_parse
-import azure.cli.core.azlogging as azlogging
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
 from azure.cli.core.commands.arm import is_valid_resource_id, parse_resource_id
 from azure.cli.core.profiles import get_sdk, ResourceType
@@ -42,8 +41,6 @@ from ._client_factory import (_resource_client_factory,
                               _resource_links_client_factory,
                               _authorization_management_client,
                               _resource_managedapps_client_factory)
-
-logger = azlogging.get_az_logger(__name__)
 
 
 def list_resource_groups(tag=None):  # pylint: disable=no-self-use

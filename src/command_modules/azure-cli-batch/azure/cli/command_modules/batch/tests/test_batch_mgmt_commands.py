@@ -10,7 +10,7 @@ import mock
 from knack.util import CLIError
 from azure.cli.testsdk import ScenarioTest, ResourceGroupPreparer, JMESPathCheck, NoneCheck
 from .batch_preparers import BatchAccountPreparer, BatchScenarioMixin
-from azure.cli.core._config import az_config, CONFIG_FILE_NAME
+from azure.cli.core._config import CONFIG_FILE_NAME
 from azure.mgmt.keyvault.models import SecretPermissions, KeyPermissions
 
 # Key Vault permissions

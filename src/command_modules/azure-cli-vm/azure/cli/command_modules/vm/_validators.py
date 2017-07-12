@@ -9,7 +9,6 @@ import re
 from msrestazure.azure_exceptions import CloudError
 
 from azure.mgmt.keyvault import KeyVaultManagementClient
-import azure.cli.core.azlogging as azlogging
 from azure.cli.core.commands.arm import resource_id, parse_resource_id, is_valid_resource_id
 from azure.cli.core.commands.validators import \
     (get_default_location_from_resource_group, validate_file_or_dict, validate_parameter_set)
@@ -21,8 +20,6 @@ import azure.cli.core.keys as keys
 from knack.util import CLIError
 
 from ._client_factory import _compute_client_factory
-
-logger = azlogging.get_az_logger(__name__)
 
 
 def validate_nsg_name(namespace):

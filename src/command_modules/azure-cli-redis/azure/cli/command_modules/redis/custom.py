@@ -5,10 +5,6 @@
 
 from knack.util import CLIError
 
-import azure.cli.core.azlogging as azlogging
-
-logger = azlogging.get_az_logger(__name__)
-
 
 def cli_redis_export(client, resource_group_name, name, prefix, container, file_format=None):
     from azure.mgmt.redis.models import ExportRDBParameters

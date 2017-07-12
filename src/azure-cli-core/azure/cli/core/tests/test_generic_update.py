@@ -7,7 +7,7 @@ import logging
 import unittest
 import shlex
 import sys
-from azure.cli.core.application import APPLICATION, Application, Configuration
+from azure.cli.core.application import AZ_CLI, Application, Configuration
 from azure.cli.core.commands import register_cli_argument
 from azure.cli.core.commands.arm import cli_generic_update_command
 

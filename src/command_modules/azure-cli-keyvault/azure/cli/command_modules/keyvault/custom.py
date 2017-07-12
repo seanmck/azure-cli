@@ -21,12 +21,9 @@ from azure.mgmt.keyvault.models import \
 from azure.graphrbac import GraphRbacManagementClient
 
 import azure.cli.core.telemetry as telemetry
-import azure.cli.core.azlogging as azlogging
 from azure.cli.command_modules.keyvault._validators import secret_text_encoding_values
 
 from knack.util import CLIError
-
-logger = azlogging.get_az_logger(__name__)
 
 
 def _default_certificate_profile():

@@ -8,7 +8,6 @@ import argparse
 from argcomplete.completers import FilesCompleter
 from six import u as unicode_string
 
-from azure.cli.core._config import az_config
 from azure.cli.core.commands.parameters import \
     (tags_type, file_type, get_resource_name_completion_list, model_choice_list, enum_default, location_type)
 from azure.cli.core.commands.validators import get_default_location_from_resource_group

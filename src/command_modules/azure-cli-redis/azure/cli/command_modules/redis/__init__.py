@@ -5,39 +5,17 @@
 
 from azure.cli.core import AzCommandsLoader
 from azure.cli.core.commands.parameters import get_resource_name_completion_list, name_type
-from azure.cli.core.util import shell_safe_json_parse
 from azure.cli.core.commands.arm import cli_generic_update_command
 
 from azure.cli.command_modules.redis._client_factory import cf_redis, cf_patch_schedules
 from azure.cli.command_modules.redis.custom import wrong_vmsize_argument_exception_handler
 import azure.cli.command_modules.redis._help  # pylint: disable=unused-import
+from azure.cli.command_modules.redis._validators import JsonString, ScheduleEntryList
 
 from azure.mgmt.redis.models.redis_management_client_enums import RebootType, RedisKeyType, SkuName
 from azure.mgmt.redis.models import ScheduleEntry
 
 from knack.arguments import enum_choice_list
-
-
-class JsonString(dict):
-    def __init__(self, value):
-        super(JsonString, self).__init__()
-        if value[0] in ("'", '"') and value[-1] == value[0]:
-            # Remove leading and trailing quotes for dos/cmd.exe users
-            value = value[1:-1]
-        dictval = shell_safe_json_parse(value)
-        self.update(dictval)
-
-
-class ScheduleEntryList(list):
-    def __init__(self, value):
-        super(ScheduleEntryList, self).__init__()
-        if value[0] in ("'", '"') and value[-1] == value[0]:
-            # Remove leading and trailing quotes for dos/cmd.exe users
-            value = value[1:-1]
-        dictval = shell_safe_json_parse(value)
-        self.extend([ScheduleEntry(row['dayOfWeek'],
-                                   int(row['startHourUtc']),
-                                   row.get('maintenanceWindow', None)) for row in dictval])
 
 
 class RedisCommandsLoader(AzCommandsLoader):

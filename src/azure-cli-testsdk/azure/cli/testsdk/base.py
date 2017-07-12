@@ -127,7 +127,6 @@ class ExecutionResult(object):
         return self.json_value
 
     def _in_process_execute(self, command):
-        from azure.cli.main import main as cli_main
         from six import StringIO
         from vcr.errors import CannotOverwriteExistingCassetteException
 

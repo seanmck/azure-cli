@@ -7,16 +7,16 @@ import os
 from pprint import pformat
 from six.moves import configparser
 
-import azure.cli.core.azlogging as azlogging
-from azure.cli.core._config import \
-    (GLOBAL_CONFIG_DIR, GLOBAL_CONFIG_PATH, set_global_config_value, get_config_parser)
+from azure.cli.core._config import GLOBAL_CONFIG_DIR, GLOBAL_CONFIG_PATH
 from azure.cli.core.profiles import API_PROFILES
 
+from knack.log import get_logger
 from knack.util import CLIError
+from knack.config import get_config_parser
+
+logger = get_logger(__name__)
 
 CLOUD_CONFIG_FILE = os.path.join(GLOBAL_CONFIG_DIR, 'clouds.config')
-
-logger = azlogging.get_az_logger(__name__)
 
 
 class CloudNotRegisteredException(Exception):

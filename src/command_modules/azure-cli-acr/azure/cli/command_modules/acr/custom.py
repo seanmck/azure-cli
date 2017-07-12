@@ -6,7 +6,6 @@
 from subprocess import call, PIPE
 
 from azure.cli.core.commands import LongRunningOperation
-import azure.cli.core.azlogging as azlogging
 
 from azure.mgmt.containerregistry.v2017_03_01.models import (
     RegistryUpdateParameters as BasicRegistryUpdateParameters,
@@ -37,8 +36,6 @@ from ._utils import (
 )
 from ._docker_utils import get_login_refresh_token
 from .credential import acr_credential_show
-
-logger = azlogging.get_az_logger(__name__)
 
 
 def acr_check_name(registry_name):

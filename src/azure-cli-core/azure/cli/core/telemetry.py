@@ -264,8 +264,8 @@ def set_command_details(command, output_type=None, parameters=None):
 @decorators.call_once
 @decorators.suppress_all_exceptions(fallback_return={})
 def _get_azure_cli_config():
-    from azure.cli.core._config import az_config
-    return az_config
+    from azure.cli.core.application import AZ_CLI
+    return AZ_CLI.config
 
 
 # internal utility functions

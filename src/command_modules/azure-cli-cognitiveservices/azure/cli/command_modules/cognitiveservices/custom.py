@@ -3,12 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from azure.mgmt.cognitiveservices.models import CognitiveServicesAccountCreateParameters, Sku
-import azure.cli.core.azlogging as azlogging
 
 from knack.prompting import prompt_y_n
 from knack.util import CLIError
-
-logger = azlogging.get_az_logger(__name__)
 
 
 def listresources(client, resource_group_name=None):

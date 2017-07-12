@@ -6,7 +6,6 @@ from __future__ import print_function
 
 import os
 
-from azure.cli.core._config import az_config, set_global_config_value
 from azure.cli.core._help import PRIVACY_STATEMENT
 from prompt_toolkit import prompt
 from six.moves import configparser

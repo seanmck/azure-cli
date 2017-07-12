@@ -10,7 +10,7 @@ from __future__ import print_function
 from azure.cli.core.decorators import transfer_doc
 from azure.cli.core.profiles import get_sdk, supported_api_version, ResourceType
 from azure.cli.command_modules.storage._factory import storage_client_factory
-from azure.cli.core.application import APPLICATION
+from azure.cli.core.application import AZ_CLI
 
 from knack.util import CLIError
 
@@ -29,7 +29,7 @@ BlockBlobService, BaseBlobService, FileService, FileProperties, DirectoryPropert
 
 
 def _update_progress(current, total):
-    HOOK = APPLICATION.get_progress_controller(True)
+    HOOK = AZ_CLI.get_progress_controller(True)
 
     if total:
         HOOK.add(message='Alive', value=current, total_val=total)

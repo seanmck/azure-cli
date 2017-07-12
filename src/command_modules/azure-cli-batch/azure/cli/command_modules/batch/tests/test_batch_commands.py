@@ -551,7 +551,6 @@ class TestBatchLoader(unittest.TestCase):  # pylint: disable=protected-access
         self.assertEqual(len(options), 4)
 
     def test_batch_cancel_operation(self):
-        from azure.cli.core._config import az_config as config
         from azure.cli.core.commands import _user_confirmed as user
 
         self.assertFalse(self.command_job._cancel_operation({}, config, user))

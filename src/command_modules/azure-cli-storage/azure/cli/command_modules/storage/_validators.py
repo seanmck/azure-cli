@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 
 from knack.util import CLIError
 from azure.cli.core._profile import CLOUD
-from azure.cli.core._config import az_config
 from azure.cli.core.profiles import get_sdk, ResourceType
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
 from azure.cli.core.commands.validators import validate_key_value_pairs
