@@ -10,13 +10,14 @@ import mock
 from knack.util import CLIError
 from azure.cli.testsdk import ScenarioTest, ResourceGroupPreparer, JMESPathCheck, NoneCheck
 from .batch_preparers import BatchAccountPreparer, BatchScenarioMixin
-from azure.cli.core._config import CONFIG_FILE_NAME
+from azure.cli.core._config import CONFIG_FILE_NAME, get_az_config
 from azure.mgmt.keyvault.models import SecretPermissions, KeyPermissions
 
 # Key Vault permissions
 ALL_SECRET_PERMISSIONS = ' '.join([perm.value for perm in SecretPermissions])
 ALL_KEY_PERMISSIONS = ' '.join([perm.value for perm in KeyPermissions])
 
+az_config = get_az_config()
 
 class BatchMgmtScenarioTests(ScenarioTest):  # pylint: disable=too-many-instance-attributes
 

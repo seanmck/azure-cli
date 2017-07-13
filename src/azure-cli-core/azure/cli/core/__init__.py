@@ -9,11 +9,10 @@ import os
 
 from knack.cli import CLI
 from knack.commands import CLICommandsLoader, CLICommand
+from knack.completion import ARGCOMPLETE_ENV_NAME
 from knack.introspection import extract_args_from_signature, extract_full_summary_from_signature
 from knack.log import get_logger
 import six
-
-ARGCOMPLETE_ENV_NAME = '_ARGCOMPLETE'
 
 logger = get_logger(__name__)
 
@@ -21,16 +20,14 @@ class AzCli(CLI):
 
     def __init__(self, **kwargs):
         super(AzCli, self).__init__(**kwargs)
-        self.session =  {
-            'headers': {},  # the x-ms-client-request-id is generated before a command is to execute
-            'command': 'unknown',
-            'completer_active': ARGCOMPLETE_ENV_NAME in os.environ,
-            'query_active': False
-        }
+        self.data['headers'] = {}  # the x-ms-client-request-id is generated before a command is to execute
+        self.data['command'] = 'unknown'
+        self.data['completer_active'] = ARGCOMPLETE_ENV_NAME in os.environ
+        self.data['query_active'] = False
 
-    def get_cli_version(output):
-        from azure.cli.core.util import show_version_info_exit
-        return show_version_info_exit(None)
+    def get_cli_version(cli):
+        from azure.cli.core.util import get_az_version_string
+        return get_az_version_string(cli.output)
 
 
 class AzCliCommand(CLICommand):
@@ -48,7 +45,6 @@ class AzCliCommand(CLICommand):
             if (self.name.split()[-1] == 'create' and overrides.settings.get('metavar', None) == 'NAME'):
                 return
             setattr(arg.type, 'configured_default_applied', True)
-            print('Context = {}', type(self.ctx))
             config_value = self.ctx.config.get(DEFAULTS_SECTION, def_config, None)
             if config_value:
                 logger.warning("Using default '%s' for arg %s", config_value, arg.name)
@@ -65,20 +61,11 @@ class MainCommandsLoader(CLICommandsLoader):
 
     def __init__(self, ctx=None):
         super(MainCommandsLoader, self).__init__(ctx)
-        from azure.cli.command_modules.redis import RedisCommandsLoader
-        from azure.cli.command_modules.profile import ProfileCommandsLoader
-        from azure.cli.command_modules.cloud import CloudCommandsLoader
-        from azure.cli.command_modules.feedback import FeedbackCommandsLoader
-        self.loaders = [
-            RedisCommandsLoader(ctx=self.ctx),
-            ProfileCommandsLoader(ctx=self.ctx),
-            CloudCommandsLoader(ctx=self.ctx),
-            FeedbackCommandsLoader(ctx=self.ctx)
-        ]
+        self.loaders = []
 
     def load_command_table(self, args):
-        for loader in self.loaders:
-            self.command_table.update(loader.load_command_table(args))
+        from azure.cli.core.commands import get_command_table
+        self.command_table = get_command_table(self, args)
         return self.command_table
 
     def load_arguments(self, command):

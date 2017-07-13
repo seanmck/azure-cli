@@ -7,7 +7,6 @@
 import argparse
 import platform
 
-from azure.cli.core.commands import register_cli_argument
 from azure.cli.core.commands.validators import validate_tag, validate_tags
 from azure.cli.core.commands.validators import generate_deployment_name
 from azure.cli.core.profiles import get_sdk, ResourceType, supported_api_version
@@ -184,7 +183,3 @@ no_wait_type = CLIArgumentType(
     help='do not wait for the long running operation to finish',
     action='store_true'
 )
-
-register_cli_argument('', 'resource_group_name', resource_group_name_type)
-register_cli_argument('', 'location', location_type)
-register_cli_argument('', 'deployment_name', deployment_name_type)

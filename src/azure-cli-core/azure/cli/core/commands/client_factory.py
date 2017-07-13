@@ -48,15 +48,15 @@ def configure_common_settings(client):
     except KeyError:
         pass
 
-    for header, value in AZ_CLI.session['headers'].items():
+    for header, value in AZ_CLI.data['headers']:
         # We are working with the autorest team to expose the add_header functionality of the generated client to avoid
         # having to access private members
         client._client.add_header(header, value)  # pylint: disable=protected-access
 
-    command_name_suffix = ';completer-request' if AZ_CLI.session['completer_active'] else ''
+    command_name_suffix = ';completer-request' if AZ_CLI.data['completer_active'] else ''
     client._client.add_header('CommandName',  # pylint: disable=protected-access
-                              "{}{}".format(AZ_CLI.session['command'], command_name_suffix))
-    client.config.generate_client_request_id = 'x-ms-client-request-id' not in AZ_CLI.session['headers']
+                              "{}{}".format(AZ_CLI.data['command'], command_name_suffix))
+    client.config.generate_client_request_id = 'x-ms-client-request-id' not in AZ_CLI.data['headers']
 
 
 def _get_mgmt_service_client(client_type,
@@ -127,6 +127,6 @@ def _add_headers(request):
     request.headers['User-Agent'] = ' '.join(agents)
 
     try:
-        request.headers.update(AZ_CLI.session['headers'])
+        request.headers.update(AZ_CLI.data['headers'])
     except KeyError:
         pass

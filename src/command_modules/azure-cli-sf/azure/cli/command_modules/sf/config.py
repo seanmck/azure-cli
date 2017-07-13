@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import os
 from azure.cli.core._environment import get_config_dir
-from azure.cli.core._config import GLOBAL_CONFIG_DIR, ENV_VAR_PREFIX
+from azure.cli.core._config import GLOBAL_CONFIG_DIR, ENV_VAR_PREFIX, get_az_config
 
 from knack.config import CLIConfig
 from knack.util import CLIError
@@ -14,7 +14,7 @@ class SfConfigParser(object):
     def __init__(self, config_path=None):
         if not config_path:
             config_path = os.path.join(get_config_dir(), "config")
-        self.az_config = CLIConfig(config_dir=GLOBAL_CONFIG_DIR, config_env_var_prefix=ENV_VAR_PREFIX)
+        self.az_config = get_az_config()
         self.az_config.config_parser.read(config_path)
 
     def no_verify_setting(self):

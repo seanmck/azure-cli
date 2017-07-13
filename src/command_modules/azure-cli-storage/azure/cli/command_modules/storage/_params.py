@@ -8,15 +8,15 @@ import argparse
 from argcomplete.completers import FilesCompleter
 from six import u as unicode_string
 
+from azure.common import AzureMissingResourceHttpError
+
 from azure.cli.core.commands.parameters import \
     (tags_type, file_type, get_resource_name_completion_list, model_choice_list, enum_default, location_type)
 from azure.cli.core.commands.validators import get_default_location_from_resource_group
 import azure.cli.core.commands.arm  # pylint: disable=unused-import
 from azure.cli.core.commands import register_cli_argument, register_extra_cli_argument, VersionConstraint
-
-from azure.common import AzureMissingResourceHttpError
-
 from azure.cli.core.profiles import get_sdk, ResourceType
+from azure.cli.core._config import get_az_config
 
 from knack.arguments import enum_choice_list, ignore_type, CLIArgumentType
 
@@ -74,6 +74,8 @@ AccountPermissions, BaseBlobService, \
                                                           'queue#QueueService',
                                                           'queue.models#QueuePermissions')
 
+
+az_config = get_az_config()
 
 # UTILITY
 

@@ -6,6 +6,9 @@
 import os
 import json
 
+from azure.cli.core._config import get_az_config
+
+az_config = get_az_config()
 
 def load_node_agent_skus(prefix, **kwargs):  # pylint: disable=unused-argument
     from msrest.exceptions import ClientRequestError

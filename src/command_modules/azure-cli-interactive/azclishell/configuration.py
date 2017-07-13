@@ -6,8 +6,11 @@ from __future__ import print_function
 
 import os
 
+from azure.cli.core._config import get_az_config
 from azure.cli.core._help import PRIVACY_STATEMENT
+
 from prompt_toolkit import prompt
+
 from six.moves import configparser
 
 SELECT_SYMBOL = {
@@ -36,6 +39,7 @@ CONFIG_FILE_NAME = 'shell-config'
 
 GESTURE_LENGTH = max(len(key) for key in GESTURE_INFO) + 1
 
+az_config = get_az_config()
 
 def help_text(values):
     """ reformats the help text """

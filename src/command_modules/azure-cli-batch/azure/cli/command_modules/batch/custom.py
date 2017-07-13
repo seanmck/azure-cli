@@ -21,9 +21,11 @@ from azure.batch.models import (CertificateAddParameter, PoolStopResizeOptions, 
 
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
 from azure.cli.core.profiles import get_sdk, ResourceType
+from azure.cli.core._config import get_az_config
 
 from knack.util import CLIError
 
+az_config = get_az_config()
 
 def transfer_doc(source_func, *additional_source_funcs):
     def _decorator(func):

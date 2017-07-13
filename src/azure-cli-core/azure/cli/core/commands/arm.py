@@ -8,11 +8,12 @@ import re
 from six import string_types
 
 from azure.cli.core import AzCliCommand
+from azure.cli.core.application import AZ_CLI, IterateValue
 from azure.cli.core.commands import get_op_handler, CONFIRM_PARAM_NAME
 from azure.cli.core.commands.client_factory import get_mgmt_service_client
-from azure.cli.core.application import AZ_CLI, IterateValue
 from azure.cli.core.util import shell_safe_json_parse
 from azure.cli.core.profiles import ResourceType
+from azure.cli.core._config import get_az_config
 
 from knack.events import EVENT_CMDLOADER_LOAD_ARGUMENTS, EVENT_INVOKER_CMD_TBL_LOADED
 from knack.introspection import extract_args_from_signature
@@ -21,6 +22,7 @@ from knack.prompting import prompt_y_n, NoTTYException
 from knack.util import todict, CLIError
 
 logger = get_logger(__name__)
+az_config = get_az_config()
 
 regex = re.compile(
     '/subscriptions/(?P<subscription>[^/]*)(/resource[gG]roups/(?P<resource_group>[^/]*))?'

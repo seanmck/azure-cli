@@ -5,19 +5,19 @@
 
 import argparse
 
-from azure.cli.core import AzCli, MainCommandsLoader, ARGCOMPLETE_ENV_NAME
+from azure.cli.core import AzCli, MainCommandsLoader
 from azure.cli.core.azlogging import AzCliLogging
 from azure.cli.core.parser import AzCliCommandParser
 import azure.cli.core.telemetry as telemetry
-from azure.cli.core._config import AzCliConfig, GLOBAL_CONFIG_DIR, ENV_VAR_PREFIX
+from azure.cli.core._config import GLOBAL_CONFIG_DIR, ENV_VAR_PREFIX
 
+from knack.completion import ARGCOMPLETE_ENV_NAME
 
 AZ_CLI = AzCli(cli_name='az',
                config_dir=GLOBAL_CONFIG_DIR,
                config_env_var_prefix=ENV_VAR_PREFIX,
                commands_loader_cls=MainCommandsLoader,
                parser_cls=AzCliCommandParser,
-               config_cls=AzCliConfig,
                logging_cls=AzCliLogging)
 
 

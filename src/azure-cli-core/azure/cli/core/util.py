@@ -45,7 +45,7 @@ def truncate_text(str_to_shorten, width=70, placeholder=' [...]'):
     return str_to_shorten[:s_len] + (str_to_shorten[s_len:] and placeholder)
 
 
-def show_version_info_exit(out_file):
+def get_az_version_string(out_file):
     import platform
     from pip import get_installed_distributions
     installed_dists = get_installed_distributions(local_only=True)

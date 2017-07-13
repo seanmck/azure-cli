@@ -42,7 +42,7 @@ from azclishell.util import get_window_dim, parse_quotes, get_os_clear_screen_wo
 from azure.cli.core.application import Configuration
 from azure.cli.core.commands import LongRunningOperation, get_op_handler
 from azure.cli.core.cloud import get_active_cloud_name
-from azure.cli.core._config import DEFAULTS_SECTION
+from azure.cli.core._config import DEFAULTS_SECTION, get_az_config
 from azure.cli.core._environment import get_config_dir
 from azure.cli.core._profile import _SUBSCRIPTION_NAME, Profile
 from azure.cli.core._session import ACCOUNT, CONFIG, SESSION
@@ -61,6 +61,7 @@ PART_SCREEN_EXAMPLE = .3
 START_TIME = datetime.datetime.utcnow()
 CLEAR_WORD = get_os_clear_screen_word()
 
+az_config = get_az_config()
 
 def space_examples(list_examples, rows):
     """ makes the example text """

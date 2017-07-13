@@ -18,10 +18,12 @@ from azure.cli.core.commands import (
     command_module_map,
     CliCommand,
     get_op_handler)
+from azure.cli.core._config import get_az_config
 
 from knack.arguments import CLICommandArgument, IgnoreAction
 from knack.introspection import extract_full_summary_from_signature, extract_args_from_signature
 
+az_config = get_az_config()
 
 _CLASS_NAME = re.compile(r"<(.*?)>")  # Strip model name from class docstring
 _UNDERSCORE_CASE = re.compile('(?!^)([A-Z]+)')  # Convert from CamelCase to underscore_case

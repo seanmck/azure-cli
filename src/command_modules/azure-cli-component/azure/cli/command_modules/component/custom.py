@@ -6,10 +6,12 @@ import site
 import logging
 from six import StringIO
 
+from azure.cli.core._config import get_az_config
 from azure.cli.core._pkg_util import COMPONENT_PREFIX, CLI_PACKAGE_NAME
 
 from knack.util import CLIError
 
+az_config = get_az_config()
 
 def _verify_not_dev():
     from azure.cli.core import __version__ as core_version
